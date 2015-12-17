@@ -1,0 +1,52 @@
+## Read outcome data
+setwd("C:\\Users\\Herbert\\Desktop\\R Programing\\hw3") #set working directory
+file_to_read <- read.csv("outcome-of-care-measures.csv", colClasses="character") #reads the file and set col to character
+file_to_read <- file_to_read[c(2,7,11,17,23)] # get only these columns
+file_to_read[,c(3,4,5)] <- sapply(file_to_read[,c(3,4,5)], as.numeric) #set these columns to numeric
+
+rankhospital <- function(state, outcome, num = "best") {
+
+NumOutcome <- c("heart attack", "heart failure","pneumonia")
+
+## Check that state and outcome are valid
+if(!state %in% file_to_read$State){
+  stop("invalid state")}
+else if(!outcome %in% NumOutcome){
+    stop("invalid outcome")}
+else{
+    if(outcome=="heart attack"){
+      outPass = 11 
+      outPass1 = 3}
+    else if (outcome == "heart failure"){
+      outPass = 17
+      outPass1 = 4}
+    else {
+      outPass = 23
+      outPass1 = 5}
+    }
+
+get_only_state <- file_to_read[file_to_read[,2]== state,] #from the file read, in the stat column, only get the state passed
+get_only_state <- get_only_state[c(1,2,outPass1)] # from the above where only the rows with the state in the column, only get column 1, 2 and outcome column
+get_only_state <- get_only_state[!is.na(get_only_state[,3]),] # from the above in column 3, which is the stat column, only get columns where they are not NA
+get_only_state <- get_only_state[order(get_only_state[,3],get_only_state[,1]),] #order by state column and secondar is hospital
+
+
+get_hospital(get_only_state, num)
+}
+
+## Return hospital name in that state with the given rank
+## 30-day death rate
+
+get_hospital <- function(data, num){ # data is the get_only_state where we cleaned the data
+if(num == "worst"){  			# if the user pass worst as num, then set num to the total number of rows in data, and return that row
+  num = nrow(data)			
+  return(data[num,1])}
+else if(num == "best"){			# else if it is best return the first row
+  num = 1
+  return(data[num,1])}
+else{					# else row is going to be the number the user passed
+  return(data[num,1])}
+}
+
+rankhospital("TX","heart failure",4)
+rankhospital("MD","pneumonia","worst")

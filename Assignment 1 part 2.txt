@@ -1,0 +1,14 @@
+complete <-function(directory, id =1:332){
+o <- c()
+dir <- paste("C:\\Users\\Herbert\\Desktop\\",directory,"\\",sep="")
+file_full <- list.files(dir, full.names=TRUE)
+
+for(i in id){
+s <-read.csv(file_full[i])
+o <- c(o,sum(!is.na(s$sulfate)))
+}
+
+data.frame("id#"=id,"nobs"=o)
+
+}
+complete("specdata",1:2)

@@ -1,0 +1,33 @@
+corr <-function(directory, threshold = 0){
+dir <- paste("C:\\Users\\Herbert\\Desktop\\",directory,"\\",sep="")
+
+df <- complete <-function(directory, id =1:332)
+
+df <- df[,1][df$nobs >threshold]
+
+corr <- c()
+
+for(idb in df){
+  readFile <- read.csv(paste(dir,formatC(idb,width=3,flag="0"),".csv",sep=""))
+  
+  corr <- c(corr,cor(readFile$sulfate,readFile$nitrate,use ="pairwise.complete.obs"))
+  }
+print(corr)
+}
+
+
+complete <-function(directory, id =1:332){
+o <- c()
+dir <- paste("C:\\Users\\Herbert\\Desktop\\",directory,"\\",sep="")
+file_full <- list.files(dir, full.names=TRUE)
+
+for(i in id){
+s <-read.csv(file_full[i])
+o <- c(o,sum(!is.na(s$sulfate)))
+}
+
+data.frame("id#"=id,"nobs"=o)
+
+}
+
+corr("specdata",1000)
