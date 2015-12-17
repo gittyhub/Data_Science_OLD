@@ -1,0 +1,40 @@
+## Read outcome data
+setwd("C:\\Users\\Herbert\\Desktop\\R Programing\\hw3")
+file_to_read <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+file_to_read <- file_to_read[c(2,7,11,17,23)]
+file_to_read[,c(3,4,5)] <- sapply(file_to_read[,c(3,4,5)], as.numeric)
+
+rankall <- function(outcome, num = "best") {
+
+NumOutcome <- c("heart attack", "heart failure","pneumoni")
+
+## Check that state and outcome are valid
+if(!outcome %in% NumOutcome){
+    stop("invalid outcome")}
+else{
+    if(outcome=="heart attack"){
+      outPass = 11 
+      outPass1 = 3}
+    else if (outcome == "heart failure"){
+      outPass = 17
+      outPass1 = 4}
+    else{
+      outPass = 23
+      outPass1 = 5}
+    }
+
+states <- unique(file_to_read[,2])
+states <- sort(states)
+  
+ranks <- data.frame(hospital=NA, state=NA)
+
+for( i in 1:length(states)){
+  ranks[i,] <- c(rankhospital(states[i], outcome, num), states[i])
+			 }
+
+return(ranks,10)
+}
+
+head(rankall("heart attack", 20), 10)
+tail(rankall("pneumonia","worst"),3)
+tail(rankall("heart failure"), 10)
