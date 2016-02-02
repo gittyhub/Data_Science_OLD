@@ -1,0 +1,75 @@
+***Q1***
+??
+
+
+***Q2***
+
+install.packages("sqldf")
+library(sqldf)
+acs <- read.csv("getdata_data_ss06pid.csv", header=T, sep=",")
+
+sqldf("select * from acs") # selects all from acs no condition included
+
+sqldf("select pwgtp1 from acs where AGEP < 50") #select pwgtp1 from acs where AGEP less than 50, correct
+
+sqldf("select * from acs where AGEP < 50") #select all fro acs where AGEP less than 50, we dont want all we only want pwgtp1
+
+sqldf("select pwgtp1 from acs") # select pwgtp1 from acs, not condition included
+
+
+***Q3***
+
+equivalent function to unique(acs$AGEP) # select all unique entry from acs in column AGEP from acs table
+
+
+sqldf("select distinct AGEP from acs") #select distinct in AGEP column from acs, correct
+
+sqldf("select distinct pwgtp1 from acs") #select distinct in pwgtpt from acs, no we want AGEP column not pwgtp1
+
+sqldf("select AGEP where unique from acs") # ??? i dont think the syntax makes sense, select AGEP where unique from acs table??
+
+sqldf("select unique * from acs") #select unique * from acs table???
+
+***4***
+
+connection <- url("http://biostat.jhsph.edu/~jleek/contact.html") # set connection to the url
+htmlCode <- readLines(connection) #read all lines in the connection of the URL
+close(connection) # close connection
+c(nchar(htmlCode[10]), nchar(htmlCode[20]), nchar(htmlCode[30]), nchar(htmlCode[100])) #Looks for all the num of char
+
+alternatively
+
+sapply(htmlCode[c(10,20,30,100)], nchar) #as oppose to c(nchar(htmlCode[10]), nchar(htmlCode[20]), nchar(htmlCode[30]), nchar(htmlCode[100]))
+
+
+or from somewhere
+
+require(httr)
+require(XML)
+htmlCode <- GET("http://biostat.jhsph.edu/~jleek/contact.html")
+content <- content(htmlCode, as="text")
+htmlParsed <- htmlParse(content, asText=TRUE)
+xpathSApply(htmlParsed, "//title", xmlValue)
+
+***5***
+
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fwksst8110.for") #sets the url var to the address given
+download.file(url, "dlfile.for") #downloads the for file as dlfile.for
+rurl <- read.fwf("dlfile.for", skip=4, widths=c(12,7,4,9,4,9,4,9,4)) #reads the dlfile.for file. if you look at the html example, its starts ron row 4 which is why we skip 4 line, then you need to take the widths of each row, if you count thd date, it is 9 in length, they you need to account for the space which is 3, so that is where we get the 12, then continue this for the other columns
+head(rurl,5) #check to see if correct
+sum(rurl$V4) # then get the sum of row 4
+
+alternatively 
+
+data <- read.csv("getdata_wksst8110.for", header=T)
+head(data)
+dim(data)
+file_name <- "getdata_wksst8110.for"
+df <- read.fwf(file=file_name,widths=c(-1,9,-5,4,4,-5,4,4,-5,4,4,-5,4,4), skip=4)
+head(df)
+sum(df[, 4])
+
+
+
+
+

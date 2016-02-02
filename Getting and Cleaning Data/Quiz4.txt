@@ -1,0 +1,73 @@
+#***Q1
+#The American Community Survey distributes downloadable data about United States communities. Download the 2006 microdata survey about housing for the state of Idaho using download.file() from here:
+#https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv
+#and load the data into R. The code book, describing the variable names is here:
+#https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FPUMSDataDict06.pdf
+#Apply strsplit() to split all the names of the data frame on the characters "wgtp". What is the value of the 123 element of the resulting list?
+
+library(data.table)
+ComSurLink <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
+download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv", "ComSurFile.csv")
+ComSurDT <- data.table(read.csv("ComSurFile.csv"))
+names(ComSurDT)
+wgtpSplit <- strsplit(names(ComSurDT), split="wgtp")
+#split on names in ComSurDT where it is "wgtp"1
+wgtpSplit[123]
+
+
+#***Q2
+#Load the Gross Domestic Product data for the 190 ranked countries in this data set:
+#https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv
+#Remove the commas from the GDP numbers in millions of dollars and average them. What is the average?
+#Original data sources:
+#http://data.worldbank.org/data-catalog/GDP-ranking-table
+
+GDPUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv"
+download.file(GDPUrl, "GDPData.csv")
+GDPData <- data.table(read.csv("GDPData.csv", skip = 4, nrows = 190))
+GDPrmComma <- gsub(",","",GDPData$X.4)
+GDPrmComma <- as.numeric(GDPrmComma)
+mean(GDPrmComma,na.rm = TRUE)
+
+#***Q3
+#In the data set from Question 2 what is a regular expression that would allow you to count the number of countries whose name begins with "United"? Assume that the variable with the country names in it is named countryNames. How many countries begin with United?
+#grep("United$",countryNames), 3
+#grep("*United",countryNames), 2
+#grep("^United",countryNames), 3
+#grep("^United",countryNames), 4
+
+grep("^United",GDPData$X.3)
+length(grep("^United",GDPData$X.3))
+
+#***Q4
+#Load the Gross Domestic Product data for the 190 ranked countries in this data set:
+#https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv
+#Load the educational data from this data set:
+#https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FEDSTATS_Country.csv
+#Match the data based on the country shortcode. Of the countries for which the end of the fiscal year is available, how many end in June?
+#Original data sources:
+#http://data.worldbank.org/data-catalog/GDP-ranking-table
+#http://data.worldbank.org/data-catalog/ed-stats
+
+GDPUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv"
+download.file(GDPUrl, "GDPData.csv")
+GDPData <- data.table(read.csv("GDPData.csv", skip = 4, nrows = 190))
+
+EduUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FEDSTATS_Country.csv"
+download.file(EduUrl, "EduData.csv")
+EduData <- read.csv("EduData.csv")
+
+merged <- merge(GDPData, EduData, by.x = "X", by.y = "CountryCode")
+fiscalYr <- grep("Fiscal year end: June", merged$Special.Notes)
+length(fiscalYr)
+
+#***Q5
+
+install.packages(quantmod)
+library(quantmod)
+amzn = getSymbols("AMZN",auto.assign=FALSE)
+sampleTimes = index(amzn)
+yr2012 <- grepl("2012-*", sampleTimes)
+day2012 <- format(sampleTimes, "%A")
+table(yr2012)
+table(day2012)

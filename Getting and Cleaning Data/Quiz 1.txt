@@ -1,0 +1,70 @@
+***Q1***
+
+q1 <- read.csv("getdata-data-ss06hid.csv") #reads cvs data from file
+
+head(q1[!is.na(q1$VAL),],5) #show all rows where VAL is not NA, returning all coulumns
+
+Value <- head(q1[q1$VAL==24,],5) # This you think wouls show all rows where VAL is equal to 24, returning all columns, but i think because there is NA in the VALU column its returning something wacky
+Value <- head(q1[!is.na(q1$VAL)&q1$VAL==24,],5) # This returns as we think it should, maybe because of the !is.na
+
+Value1 <- q1[!is.na(q1$VAL)&q1$VAL==24,] # to remove all na from VAL and to get all val over 24
+length(value1[1,]) # to get the length of column 1 to see how many records
+
+Likewise
+
+alt_val <- q1$VAL == 24
+summary(alt_val)
+
+
+***Q2***
+
+
+***Q3***
+need to install rJava and xlsx
+install.packages("rJava")
+install.packages("xlsx")
+
+library(rJava)
+library(xlsx)
+
+dat <- read.xlsx("getdata-data-DATA.gov_NGAP.xlsx",sheetIndex=1, colIndex=7:15, rowIndex=18:23,header=TRUE)
+sum(dat$Zip*dat$Ext,na.rm=T)
+
+
+***Q4***
+install.packages("XML")
+library(XML)
+
+site <- "http://d396qusza40orc.cloudfront.net/getdata/data/restaurants.xml"
+xmldoc <- xmlTreeParse(file=file,useInternal=TRUE)
+rootNode <- xmlRoot(xmldoc)
+xmlName(root.Node)
+
+[1]"response"
+
+zipcode <- xpathSApply(root.Node, "//zipcode", xmlValue)
+zipcode[zipcode==21231]
+length(zipcode[zipcode==21231])
+
+***Q5
+
+install.packages("curl")
+install.packages("data.table")	
+library(curl)
+library(data.table)
+
+file <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06pid.csv"
+download.file(file,dest="./fromsite",method="curl") #here the curl might not work, so try it without the curl, it, we need the curl for https
+DT <- fread("fromsite.csv")
+# then try all the codes, adding system.time(...  for the codes and replacing \) with $
+
+
+
+
+
+53
+one per colum
+largest number
+127
+
+tried tapply, mean short and long, maybe s appy
