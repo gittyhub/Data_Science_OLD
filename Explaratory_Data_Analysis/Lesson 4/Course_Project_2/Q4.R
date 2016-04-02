@@ -13,6 +13,7 @@ if(!exists("SCC"))
 
 library(ggplot2)
 library(plyr)
+#***create a png
 png("plot4.png")
 #***Look for coal emissions
 head(SCC)
@@ -48,6 +49,9 @@ coalbyYear <- ddply(coal1, .(year, type), function(x) sum(x$Emissions))
 #***change the name of the sum column to Emissions
 
 colnames(coalbyYear)[3] <- "Emissions"
+
+#***Use ggplot to setup the graph. coalbyYear, is the source, for aes, aesthetics, use year for x and Emission for 
+#***y, and color by type column.
 
 g <- ggplot(coalbyYear, aes(year, Emissions, color = type))
 p <- g + geom_line() + ggtitle("Emissions: Coal")

@@ -37,7 +37,6 @@ g <- ggplot(BaltimoresumD, aes(year, Emissions, color = type))
 p <- g + geom_line()+guides(col=guide_legend())
 
 #***with facets
-
 #p <- g + geom_line()+facet_wrap(~type)+guides(col=guide_legend())
 
 print(p)
