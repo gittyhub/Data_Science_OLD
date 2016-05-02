@@ -4,7 +4,7 @@
 1. Load the data.
 ```r
 read_activity <- read.csv("activity.csv")
-'''
+```
 2. Process/transform the data (if necessary) into a format suitable for your analysis
 ```r
 NA
@@ -32,7 +32,7 @@ mean_steps_day<- sum(apply_activity)/tot_observation
 #take the tail end up until we have observations greater than zero
 tail(sort(apply_activity), tot_observation)
 median(tail(sort(apply_activity), tot_observation))
-```r
+```
 
 ## What is the average daily activity pattern?
 
