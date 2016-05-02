@@ -1,12 +1,38 @@
 #Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
+1. Load the data.
 ```r
-test
+read_activity <- read.csv("activity.csv")
+'''
+2. Process/transform the data (if necessary) into a format suitable for your analysis
+```r
+NA
 ```
 ## What is mean total number of steps taken per day?
+1. Make a histogram of the total number of steps taken each day
+```r
+apply_activity<- tapply(read_activity$steps, read_activity$date, na.rm = TRUE, sum)
+qplot(apply_activity, binwidth=3000,data=activity_DF, xlab = "total number of steps taken each day")
+```
+2. Calculate and report the mean and median total number of steps taken per day
+```r
+#----using tapply, returns an array
+#find mean
+#find out how many zeros we have
+table(apply_activity)[1]
+#find total observation in apply_activity
+length(apply_activity)
+#total observation minus all zero is the number of observation we divid by
+tot_observation <- length(apply_activity)-table(apply_activity)[1]
+mean_steps_day<- sum(apply_activity)/tot_observation
 
-
+#find median
+#sort the list so that its in order
+#take the tail end up until we have observations greater than zero
+tail(sort(apply_activity), tot_observation)
+median(tail(sort(apply_activity), tot_observation))
+```r
 
 ## What is the average daily activity pattern?
 
