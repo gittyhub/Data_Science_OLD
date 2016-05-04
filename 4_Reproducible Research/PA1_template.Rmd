@@ -13,19 +13,20 @@ NA
 ####1. Make a histogram of the total number of steps taken each day
 ```r
 apply_activity<- tapply(read_activity$steps, read_activity$date, na.rm = TRUE, sum)
-qplot(apply_activity, binwidth=3000,data=activity_DF, xlab = "total number of steps taken each day")
+qplot(apply_activity, binwidth=3000, xlab = "total number of steps taken each day")
 ```
 ####2. Calculate and report the mean and median total number of steps taken per day
 ```r
-#----using tapply, returns an array
+#----using aggregate, returns a dataframe
+apply_activity_A <-aggregate(steps~date, read_activity, na.rm=TRUE, sum)
+apply_activity_A
+hist(apply_activity_A$steps)
 #find mean
-#find out how many zeros we have
-table(apply_activity)[1]
-#find total observation in apply_activity
-length(apply_activity)
-#total observation minus all zero is the number of observation we divid by
-tot_observation <- length(apply_activity)-table(apply_activity)[1]
-mean_steps_day<- sum(apply_activity)/tot_observation
+mean(apply_activity_A$steps, na.rm=TRUE)
+#10766.19
+#find median
+median(apply_activity_A$steps)
+#10765
 
 #find median
 #sort the list so that its in order
@@ -40,7 +41,7 @@ median(tail(sort(apply_activity), tot_observation))
 apply_activity_Mean <-aggregate(steps~interval, read_activity, na.rm=TRUE, mean)
 names(apply_activity_Mean)
 plot( apply_activity_Mean$interval, apply_activity_Mean$steps, type="l", xlab="Mean Interval", ylab="Steps", main="Intervals and Steps")
-head(apply_activity_Mean)
+
 ```
 
 ####2. Determin which position has the max steps
@@ -79,7 +80,18 @@ m_steps_4_na <- mean(read_activity_NoNA[,1], na.rm = TRUE)
 read_activity_NoNA[na_v_row, 1] <- m_steps_4_na
 
 ####4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
-
+```r
+#Get total number of steps taken each day
+sum_na_activity <- aggregate(steps~date,read_activity_NoNA, na.rm=TRUE,sum)
+#Create a histogram
+hist(sum_na_activity$steps, xlab = "# Steps with fill NA Values", ylab = "Frequency", main = "Histogram of activity with NA replaced with mean")
+mean(sum_na_activity$steps)
+#10766.19
+median(sum_na_activity$steps)
+#10766.19
+#Compared to above where NA's were not replaced, the mean and median diff slightly. 
+Mean with NA's = 10766.19, NA replaced with mean = 10766.19
+Median with NA's = 10765.00, NA replaced with mean = 10766.19
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
