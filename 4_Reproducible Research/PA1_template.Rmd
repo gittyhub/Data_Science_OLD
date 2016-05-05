@@ -73,6 +73,7 @@ na_step_row <- which(is.na(read_activity_NoNA[,1]))
 m_steps_4_na <- mean(read_activity_NoNA[,1], na.rm = TRUE)
 #We now know the location of the rm, in rows, and the column we want to replace, steps, or the first column. We replace this with the mean we found
 read_activity_NoNA[na_v_row, 1] <- m_steps_4_na
+```
 
 ####4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 ```r
@@ -92,16 +93,17 @@ Median with NA's = 10765.00, NA replaced with mean = 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
-#For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
+###For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
 
 ####1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+```r
 read_activity_WD <-read.csv("activity.csv")
 head(read_activity_WD)
 read_activity_WD$date_of_week <-weekdays(as.Date(as.factor(read_activity_WD$date)))
 read_activity_WD <- read_activity_WD[,c("steps", "date", "date_of_week", "interval")]
 names(read_activity_WD)[names(read_activity_WD)=="date_of_week"] <- "day_of_week"
 head(read_activity_WD)
-
+```
 ####2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
 
