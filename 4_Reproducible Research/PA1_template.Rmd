@@ -27,11 +27,6 @@ mean(apply_activity_A$steps, na.rm=TRUE)
 #find median
 median(apply_activity_A$steps)
 #10765
-
-#find median
-#sort the list so that its in order
-#take the tail end up until we have observations greater than zero
-median(tail(sort(apply_activity), tot_observation))
 ```
 
 ## What is the average daily activity pattern?
@@ -92,6 +87,22 @@ median(sum_na_activity$steps)
 #Compared to above where NA's were not replaced, the mean and median diff slightly. 
 Mean with NA's = 10766.19, NA replaced with mean = 10766.19
 Median with NA's = 10765.00, NA replaced with mean = 10766.19
-
+#The impact of imputing missing data is minimal from the data above. However, comparing both histograms we see the peaks
+#where the NA's were replace are higher.
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+#For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
+
+####1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+read_activity_WD <-read.csv("activity.csv")
+head(read_activity_WD)
+read_activity_WD$date_of_week <-weekdays(as.Date(as.factor(read_activity_WD$date)))
+read_activity_WD <- read_activity_WD[,c("steps", "date", "date_of_week", "interval")]
+names(read_activity_WD)[names(read_activity_WD)=="date_of_week"] <- "day_of_week"
+head(read_activity_WD)
+
+####2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+
+
