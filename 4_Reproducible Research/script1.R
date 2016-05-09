@@ -1,8 +1,7 @@
+setwd("C:/Users/***/Desktop/R Programing/4_Reproducible Research")
 library(ggplot2)
 read_activity <- read.csv("activity.csv")
 head(read_activity)
-#class(apply_activity)
-#class(q)
 
 #----using tapply, returns an array
 apply_activity<-tapply(read_activity$steps, read_activity$date, FUN=sum, na.rm=TRUE)
@@ -23,7 +22,7 @@ median(tail(sort(apply_activity), tot_observation))
 
 #----using aggregate, returns a dataframe
 apply_activity_A <-aggregate(steps~date, read_activity, na.rm=TRUE, sum)
-apply_activity_A
+class(apply_activity_A)
 hist(apply_activity_A$steps)
 #find mean
 mean(apply_activity_A$steps, na.rm=TRUE)
@@ -71,7 +70,7 @@ class(read_activity_NoNA)
 na_step_row <- which(is.na(read_activity_NoNA[,1]))
 #Get the mean of steps
 m_steps_4_na <- mean(read_activity_NoNA[,1], na.rm = TRUE)
-#Given the location of the rm, in rows, and the column we want to replace is steps, or the first column
+#Given the location of the na, in rows, and the column we want to replace is steps, or the first column
 read_activity_NoNA[na_step_row, 1] <- m_steps_4_na
 head(read_activity_NoNA)
 #Make a histogram of the total number of steps taken each day and Calculate and report the mean and median 
@@ -83,21 +82,31 @@ mean(sum_na_activity$steps)
 median(sum_na_activity$steps)
 head(sum_na_activity)
 
-#For this part the weekdays() function may be of some help here. Use the dataset with the filled-in 
+#**For this part the weekdays() function may be of some help here. Use the dataset with the filled-in 
 #missing values for this part.
-read_activity_WD <-read.csv("activity.csv")
-head(read_activity_WD)
+
+#*Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether 
+#*a given date is a weekday or weekend day.
+read_activity_WD <- read_activity_NoNA
+head(read_activity_NoNA)
 read_activity_WD$date_of_week <-weekdays(as.Date(as.factor(read_activity_WD$date)))
 read_activity_WD <- read_activity_WD[,c("steps", "date", "date_of_week", "interval")]
 names(read_activity_WD)[names(read_activity_WD)=="date_of_week"] <- "day_of_week"
 head(read_activity_WD)
-weekdays(factor(read_activity_WD$date))
-#Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether 
-#a given date is a weekday or weekend day.
+read_activity_WD[,"wday_or_wEnd"] <- ifelse(read_activity_WD$day_of_week == "Saturday" | read_activity_WD$day_of_week == "Sunday", "Weekend", "Weekday")
+read_activity_WD <- read_activity_WD[,c(1,2,3,5,4)]
+head(read_activity_WD)
+agg_activity_WD <- aggregate(steps~date, read_activity_WD, sum, na.rm = TRUE)
+names(read_activity_WD)[names(read_activity_WD)=="steps"] <- c("total_steps")
 
-#Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and 
-#the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
-#See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+#*Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and 
+#*the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
+#*See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+avg_steps_day <- aggregate(read_activity_WD$total_steps, by=list(read_activity_WD$wday_or_wEnd, read_activity_WD$day_of_week, read_activity_WD$interval), mean)
+head(avg_steps_day)
+names(avg_steps_day) <- c("wDay_wEnd", "Day_week", "interval", "mean_Steps")
+ggplot(avg_steps_day, aes(x=interval, y=mean_Steps))+geom_line(color="blue")+ facet_wrap(~wDay_wEnd, nrow=2, ncol=1)+labs(x="Interval", y="Mean # of steps")
 
 
 
