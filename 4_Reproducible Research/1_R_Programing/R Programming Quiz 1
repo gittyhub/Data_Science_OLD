@@ -1,0 +1,78 @@
+> getwd()
+[1] "C:/Users/Herbert/Desktop"
+> hw1 <- read.csv("hw1_data.csv", header = TRUE)
+
+> "Q11 names of column"
+[1] "Q11 names of column"
+> names(hw1)
+[1] "Ozone"   "Solar.R" "Wind"    "Temp"    "Month"   "Day"    
+
+> "Q12 first two rows"
+[1] "Q12 first two rows"
+> hw1[1:2,]
+  Ozone Solar.R Wind Temp Month Day
+1    41     190  7.4   67     5   1
+2    36     118  8.0   72     5   2
+
+> "Q13 how many rows"
+> nrow(hw1)
+[1] 153
+
+> "Q14 last two rows"
+[1] "Q14 last two rows"
+> tail(hw1,2)
+    Ozone Solar.R Wind Temp Month Day
+152    18     131  8.0   76     9  29
+153    20     223 11.5   68     9  30
+
+> "Q15 Value of Ozone in 47th row"
+[1] "Q15 Value of Ozone in 47th row"
+> hw1[47,]
+   Ozone Solar.R Wind Temp Month Day
+47    21     191 14.9   77     6  16
+
+> "Q16 how many missing values in Ozone data frame"
+[1] "Q16 how many missing values in Ozone data frame"
+> is.na(hw1[,1])
+  [1] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE
+ [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [25]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [37]  TRUE FALSE  TRUE FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE
+ [49] FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [61]  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+ [73] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE
+ [85] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [97] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE
+[109] FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE FALSE
+[121] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[133] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[145] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
+> sum(is.na(hw1[,1]))
+[1] 37
+
+> "Q17 mean of the Ozone column in dataset, excluding NA"
+[1] "Q17 mean of the Ozone column in dataset, excluding NA"
+> missing <- is.na(hw1[,1])
+> good <- complete.cases(missing,hw1[,1])
+> mean(hw1[,1][good])
+[1] 42.12931
+
+> "Q18 Extrace the rows where Ozone is above 31 and Temp values are above90. What is the mean of SolarR in this subset"
+[1] "Q18 Extrace the rows where Ozone is above 31 and Temp values are above90. What is the mean of SolarR in this subset"
+> removeNaFromhw1 <- hw1[complete.cases(hw1),]
+> over31 <-removeNaFromhw1[,1]>31
+> over90 <-removeNaFromhw1[,4]>90
+> mean(removeNaFromhw1[over31 & over90,][,2])
+[1] 212.8
+
+> "Q19 what is the mean of Temp when Month is 6"
+[1] "Q19 what is the mean of Temp when Month is 6"
+> monEq6 = hw1[,5]==6
+> mean(hw1[monEq6,][,4])
+[1] 79.1
+
+> "Q20 max value of ozone in the month of may"
+[1] "Q20 max value of ozone in the month of may"
+> max(removeNaFromhw1[removeNaFromhw1[,5]==5,][,1])
+[1] 115
+

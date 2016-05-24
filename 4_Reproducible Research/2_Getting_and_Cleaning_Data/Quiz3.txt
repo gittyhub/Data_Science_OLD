@@ -1,0 +1,148 @@
+***Q1*** 
+AGS 6, ACR 3
+
+fileurl <- 'https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv' 
+# set url locations var
+
+download.file(fileurl, "dlfile.csv") 
+# download file, .csv is the file name
+
+rdlfile <- read.csv(fileurl) 
+# read the file to this var
+
+agricultureLogical = rdlfile$AGS ==6 & rdfile$ACR ==3 
+# makes the logical vector, the link to pdf provides description of columns
+
+frist3 <- which(agricultureLogical) 
+#which treats NA as as false
+
+
+
+***Q2***
+
+fileurl2 <- 'https://d396qusza40orc.cloudfront.net/getdata%2Fjeff.jpg' 
+#set url locations var
+
+download.file(fileurl2, "jfile.jpeg", mode ="wb") 
+#downlaod the jpeg, mode wb is binary, might not get the same answer if mode is not set
+
+rjpegN <- readJPEG("jfile.jpeg", native =TRUE) 
+# reads the jpeg file
+
+quantile(rjpegN) 
+#gets the quantile
+
+quantile(rjpegN, probs = c(0.3,0.8)) 
+#more specific quantile
+
+***Q3***
+
+gdpUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv"
+eduUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FEDSTATS_Country.csv"
+#sets url location var
+
+gdp <- download.file(gdpUrl, "gdp.csv")
+edu <- download.file(eduUrl, "edu.csv")
+#download file, url var then file names to be saved as
+
+gdp.tbl <- data.table(read.csv("gdp.csv", skip = 4, nrows = 190))
+#reads in the csv file to data frame, from original source we see it starts 4 lines down with 190 rows
+
+names(gdp.tbl)
+#check the names of the data frame
+
+gdp.tbl <- gdp.tbl[,c("X","X.1", "X.3", "X.4")]
+#only selects the coulmns you want, other column we see have na
+
+setnames(gdp.tbl, c("X","X.1","X.3","X.4"), c("CountryCode", "Rank", "LongName", "GDP"))
+#sets the name of the column, we select the column followed by the new name we want to use
+
+edu.tbl <- data.table(read.csv("edu.csv"))
+#reads eduUrl to a data frame
+
+merger <- merge(gdp.tbl, edu.tbl, all = TRUE, by = c("CountryCode"))
+#merges the two data frames together
+
+data3 <- sum(!is.na(unique(data3$Rank)))
+# unique is there for tie, with and without it provides different solution
+
+o <- merger[order(merger$Rank, decreasing = TRUE), c("CountryCode", "LongName", "Long.Name", "Rank", "GDP", "Income.Group")] 
+
+# from data3 order on Rank, decrease, select the new column order, ex. get this on one line
+
+o <- o[complete.cases(o),]
+#remove na's
+
+o[13,]
+#select the 13th line
+
+
+***Q4***
+
+tapply(o$Rank, o$Income.Group, mean)
+
+alternatively
+
+o <- data.table(o)
+
+o[,mean(Rank, na.rm = TRUE), by = Income.Group]
+
+***Q5***
+
+breaks <- quantile(data2$rankingGDP, probs = seq(0, 1, 0.2), na.rm = TRUE)
+
+breaks <- cut(o$Rank, breaks = 5)
+
+table(breaks, o$Income.Group)
+
+also
+
+o$breaker <- cut(o$Rank, breaks = 5)
+
+o[Income.Group == "Lower middle income", .N, by = c("Income.Group", "breaker")]
+
+
+
+
+
+how do you rename a column
+how do you remove a row
+-c
+how do you add a row
+
+how do you remove a column
+-c
+how do you add a column
+
+how do you select certain column
+c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exercise,
+
+create a list
+
+create a table, w/o header
+-add to the table
+
+create a table, w header
+-add to table and header
+
+create a dataframe w/o header
+-add to the dataframe
+
+create a dataframe w header
+-add to dataframe and header
+

@@ -1,0 +1,128 @@
+---
+title: "Reproducible Research: Assignment 1"
+author: "Herbert Quach"
+date: "May 9, 2016"
+output: html_document
+---
+
+#Reproducible Research: Peer Assessment 1
+
+## Loading and preprocessing the data
+####1. Load the data.
+```r
+read_activity <- read.csv("activity.csv")
+```
+###2. Process/transform the data (if necessary) into a format suitable for your analysis
+```r
+NA
+```
+## What is mean total number of steps taken per day?
+####1. Make a histogram of the total number of steps taken each day
+```r
+apply_activity<- tapply(read_activity$steps, read_activity$date, na.rm = TRUE, sum)
+qplot(apply_activity, binwidth=3000, xlab = "total number of steps taken each day")
+```
+####2. Calculate and report the mean and median total number of steps taken per day
+```r
+#----using aggregate, returns a dataframe
+apply_activity_A <-aggregate(steps~date, read_activity, na.rm=TRUE, sum)
+apply_activity_A
+hist(apply_activity_A$steps)
+#find mean
+mean(apply_activity_A$steps, na.rm=TRUE)
+#10766.19
+#find median
+median(apply_activity_A$steps)
+#10765
+```
+
+## What is the average daily activity pattern?
+####1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+```r
+#Essentially, plot the same as above but instead of by date its by interval, and we are using mean not sum
+apply_activity_Mean <-aggregate(steps~interval, read_activity, na.rm=TRUE, mean)
+names(apply_activity_Mean)
+plot( apply_activity_Mean$interval, apply_activity_Mean$steps, type="l", xlab="Mean Interval", ylab="Steps", main="Intervals and Steps")
+
+```
+
+####2. Determin which position has the max steps
+```r
+#steps is in column 2
+position <- which.max(apply_activity_Mean[,2])
+apply_activity_Mean[position,]
+  interval    steps
+104      835 206.1698
+```
+
+## Imputing missing values
+####1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+```r
+sum(is.na(read_activity[,1]))
+2304
+#likewise
+sum(is.na(read_activity$steps))
+2304
+
+```
+####2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+* Locate all na values
+* Replace those na values with the mean of the steps minus the na's
+
+####3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```r
+#First lets reread the data
+read_activity_NoNA <-read.csv("activity.csv")
+#From above, locate all na values
+#This gives the location, rows, where na's can be found
+na_step_row <- which(is.na(read_activity_NoNA[,1]))
+#Get the mean of steps
+m_steps_4_na <- mean(read_activity_NoNA[,1], na.rm = TRUE)
+#We now know the location of the rm, in rows, and the column we want to replace, steps, or the first column. We replace this with the mean we found
+read_activity_NoNA[na_v_row, 1] <- m_steps_4_na
+```
+
+####4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+```r
+#Get total number of steps taken each day
+sum_na_activity <- aggregate(steps~date,read_activity_NoNA, na.rm=TRUE,sum)
+#Create a histogram
+hist(sum_na_activity$steps, xlab = "# Steps with fill NA Values", ylab = "Frequency", main = "Histogram of activity with NA replaced with mean")
+mean(sum_na_activity$steps)
+#10766.19
+median(sum_na_activity$steps)
+#10766.19
+#Compared to above where NA's were not replaced, the mean and median diff slightly. 
+Mean with NA's = 10766.19, NA replaced with mean = 10766.19
+Median with NA's = 10765.00, NA replaced with mean = 10766.19
+#The impact of imputing missing data is minimal from the data above. However, comparing both histograms we see the peaks
+#where the NA's were replace are higher.
+```
+
+## Are there differences in activity patterns between weekdays and weekends?
+###For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
+
+####1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+```r
+#read_activity_NoNA taken from above, question 3
+read_activity_WD <- read_activity_NoNA
+head(read_activity_NoNA)
+read_activity_WD$date_of_week <-weekdays(as.Date(as.factor(read_activity_WD$date)))
+read_activity_WD <- read_activity_WD[,c("steps", "date", "date_of_week", "interval")]
+names(read_activity_WD)[names(read_activity_WD)=="date_of_week"] <- "day_of_week"
+head(read_activity_WD)
+read_activity_WD[,"wday_or_wEnd"] <- ifelse(read_activity_WD$day_of_week == "Saturday" | read_activity_WD$day_of_week == "Sunday", "Weekend", "Weekday")
+read_activity_WD <- read_activity_WD[,c(1,2,3,5,4)]
+head(read_activity_WD)
+agg_activity_WD <- aggregate(steps~date, read_activity_WD, sum, na.rm = TRUE)
+names(read_activity_WD)[names(read_activity_WD)=="steps"] <- c("total_steps")
+```
+
+####2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+```r
+#Using aggregate we want to group by weekday/weekeday, and day of the week, and get the mean
+avg_steps_day <- aggregate(read_activity_WD$total_steps, by=list(read_activity_WD$wday_or_wEnd, read_activity_WD$day_of_week, read_activity_WD$interval), mean)
+head(avg_steps_day)
+names(avg_steps_day) <- c("wDay_wEnd", "Day_week", "interval", "mean_Steps")
+ggplot(avg_steps_day, aes(x=interval, y=mean_Steps))+geom_line(color="blue")+ facet_wrap(~wDay_wEnd, nrow=2, ncol=1)+labs(x="Interval", y="Mean # of steps")
+```

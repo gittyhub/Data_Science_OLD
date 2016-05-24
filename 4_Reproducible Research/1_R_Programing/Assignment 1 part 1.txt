@@ -1,0 +1,9 @@
+pollutanat1 <-function(directory, pollutant, id =1:332){
+dir <- paste("C:\\Users\\Herbert\\Desktop\\",directory,"\\",sep="")
+file_full <- list.files(dir, full.names=TRUE)
+whole_data <- data.frame()
+for (i in id){
+whole_data <- rbind(whole_data,read.csv(file_full[i]))
+}
+mean(whole_data [, pollutant], na.rm=TRUE)
+}

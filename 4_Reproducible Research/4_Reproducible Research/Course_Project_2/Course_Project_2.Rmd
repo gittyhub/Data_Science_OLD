@@ -1,0 +1,107 @@
+---
+title: "Reproducible_Research_Proj_2: Harmful Events"
+author: "Adam Warlock"
+date: "May 17, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Synopsis
+
+###Assignment
+
+The basic goal of this assignment is to explore the NOAA Storm Database and answer some basic questions about severe weather events. You must use the database to answer the questions below and show the code for your entire analysis. Your analysis can consist of tables, figures, or other summaries. You may use any R package you want to support your analysis.
+
+###Questions
+
+Your data analysis must address the following questions:
+
+1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+
+2. Across the United States, which types of events have the greatest economic consequences?
+
+###Plan
+1. Load data into R
+2. Find column names and identifiy all EVTYPE.
+3. From names, find out what column that will be used.
+
+
+###Data Processing
+```{r}
+#This assumes that the Storm data has already been downloaded and extracted
+#Set working directory
+setwd("C:/Users/Herbert/Desktop/R Programing/4_Reproducible Research/Course_Project_2")
+storm <- read.csv("repdata_data_StormData.csv")
+names(storm)
+```
+
+From the names, appears we only need the following coloumns to complete this exercise<br>
+*STATE*<br>
+*EVTYPE*<br>
+*FATALITIES*<br>
+*INJURIES*<br>
+*PROPDMG*<br>
+*CROPDMG*<br>
+
+```{r}
+stormN <- storm[,c("STATE", "EVTYPE", "FATALITIES", "INJURIES","PROPDMG", "CROPDMG")]
+head(stormN)
+#Because all the columns are factors, we need to convert FATALITIES-CROPDMG to numeric
+stormN[,3:6] <- sapply(stormN[,3:6], as.numeric)
+```
+
+###Most Harmful
+```{r}
+library(ggplot2)
+Most_Harmful <- aggregate(FATALITIES~EVTYPE, stormN, sum, na.rm = TRUE)
+#Ordering the list will help make it a little easier when graphing
+Most_Harmful <-Most_Harmful[order(Most_Harmful$FATALITIES, decreasing = TRUE),]
+#Then we need to locate which is most harful related to population health
+ID_Most_Harm <- which.max(Most_Harmful[,2])
+Most_Harmful[ID_Most_Harm,]
+top5 <- head(Most_Harmful,5)
+top5
+ggplot(top5, aes(x=EVTYPE, y=FATALITIES, group=1)) + geom_line(color="red")+labs(title="Fatalities")
+```
+
+We see that tornados are the most harful to population health related to fatalities
+
+```{r}
+#Most Harmful related to injuries
+#We use the stormN data frame from above
+Most_Injuries <- aggregate(INJURIES~EVTYPE, stormN, sum, na.rm = TRUE)
+#Then we need to locate which had the most injuries related to population health
+Most_Injuries <-Most_Injuries[order(Most_Injuries$INJURIES, decreasing = TRUE),]
+ID_Most_Injuries <- which.max(Most_Injuries[,2])
+Most_Injuries[ID_Most_Injuries,]
+top5I <- head(Most_Injuries,5)
+top5I
+ggplot(top5I, aes(x=EVTYPE, y=INJURIES, group=1)) + geom_line(color="purple")+labs(title="Injuries")
+```
+
+We see that tornados are also most harmful to population related to injuries
+
+####Greatest economic consequences
+```{r}
+#Property Damage
+#We use the stormN data frame from above
+Great_eco_conseq <- aggregate(PROPDMG~EVTYPE, stormN, sum, na.rm = TRUE)
+#Then we need to locate which is most harful related to population health
+Great_eco_conseq <- Great_eco_conseq[order(Great_eco_conseq$PROPDMG, decreasing = TRUE),]
+ID_Great_eco_conseq <- which.max(Great_eco_conseq[,2])
+Great_eco_conseq[ID_Great_eco_conseq,]
+top5E <- head(Great_eco_conseq, 5)
+top5E
+ggplot(top5E, aes(x=EVTYPE, y=PROPDMG, group=1)) + geom_line(color="green") + labs(title="Ecomonical Damages")
+```
+
+We see that tornados has the most economical consequence relative to property damage
+
+
+
+
+
+

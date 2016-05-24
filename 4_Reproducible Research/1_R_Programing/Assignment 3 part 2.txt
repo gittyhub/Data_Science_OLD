@@ -1,0 +1,37 @@
+best <- function(state,outcome){
+  filez <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+  SelectedState <- filez[filez$State == state,] #extract all rows where column state equals state
+
+  SelectedState[,11] <- as.numeric(SelectedState[,11])
+  SelectedState[,17] <- as.numeric(SelectedState[,17])
+  SelectedState[,23] <- as.numeric(SelectedState[,23])
+  NumOutcome <- c("heart attack", "heart failure","pneumoni")
+  if(!state %in% filez$State){
+    stop("invalid state")}
+  else if(!outcome %in% NumOutcome){
+    stop("invalid outcome")}
+  else{
+    if(outcome=="heart attack"){
+      outPass = 11}
+    else if (outcome == "heart failure"){
+      outPass = 17}
+    else{
+      outPass = 23} 
+      }
+  work(SelectedState,outPass,state)
+  
+}
+
+work <- function(data, outcome,state){
+  outcome1 <- data[,outcome] #selet all from heart attack coulmun
+  min <- min(outcome1, na.rm = TRUE) #gets the min from all of the heart attach column
+  min_index <- which(outcome1 == min) #which row has min
+  hosp_name <- data[min_index,2]
+  return(hosp_name)
+}
+
+
+best("TX", "heart attack")
+best("TX", "heart failure")
+best("MD", "heart attack")
+best("BB", "heart attack")
